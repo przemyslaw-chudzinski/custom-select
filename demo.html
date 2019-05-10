@@ -1,0 +1,131 @@
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Demo of custom select</title>
+    <link rel="stylesheet" href="dist/custom-select.css">
+    <link rel="stylesheet" href="dist/theme-a.css">
+
+    <style>
+
+        body {
+            padding: 0;
+            margin: 0;
+            font-family: sans-serif;
+        }
+
+        * {
+            -webkit-box-sizing: border-box;
+            -moz-box-sizing: border-box;
+            box-sizing: border-box;
+        }
+
+
+        .wrapper {
+            height: 30vh;
+            width: 100%;
+            padding: 2rem;
+            background: aliceblue;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-flow: column;
+        }
+
+        .wrapper h2 {
+            text-align: center;
+        }
+
+        .wrapper-2 {
+            background: beige;
+        }
+
+        .wrapper-3 {
+            background: darkgray;
+        }
+
+        /*select {*/
+        /*    width: 400px;*/
+        /*}*/
+
+    </style>
+
+</head>
+<body>
+
+
+<div class="wrapper">
+
+    <select id="custom-select" class="foo">
+
+        <option>-- Choose any element --</option>
+        <option value="1" data-icon="menu">This is option number one</option>
+        <option value="2" data-icon="menu">This is option number two</option>
+        <option value="3" data-icon="menu">This is option number three</option>
+
+    </select>
+
+</div>
+
+<div class="wrapper wrapper-2">
+
+    <h2>Usage when component is initialized with any value</h2>
+
+    <select id="custom-select-2" class="foo">
+
+        <option>-- Choose any element --</option>
+        <option value="1">This is option number one</option>
+        <option value="2">This is option number two</option>
+        <option value="3" selected>This is option number three</option>
+
+    </select>
+
+</div>
+
+<div class="wrapper wrapper-3">
+
+    <h2>Usage with extra data and optionFactory</h2>
+
+    <select id="custom-select-3" class="foo">
+
+        <option>-- Choose any element --</option>
+        <option value="1" data-icon="menu" data-desc="This is a description of option number one">This is option number one</option>
+        <option value="2" data-icon="menu" data-desc="This is a description of option number two">This is option number two</option>
+        <option value="3" data-icon="menu" data-desc="This is a description of option number three">This is option number three</option>
+
+    </select>
+
+</div>
+
+
+<script src="dist/custom-select.js"></script>
+
+<script>
+
+    const cs = new CustomSelect('#custom-select', {});
+
+    const cs2 = new CustomSelect('#custom-select-2', {});
+
+    const cs3 = new CustomSelect('#custom-select-3', {
+
+        templateFn(option) {
+            return `
+                <div>
+                    <h4 class="label">${option.innerText}</h4>
+                    <span class="desc">${option.dataset.desc}</span>
+                </div>
+            `;
+        },
+
+        mapTplToPlaceholder(optionTemplate) {
+            return optionTemplate.querySelector('.label').innerText;
+        }
+
+    });
+
+</script>
+
+</body>
+</html>
