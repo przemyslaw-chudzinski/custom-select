@@ -24,7 +24,7 @@
         padding: 1rem;
         cursor: pointer;
 
-        &:hover {
+        &:hover, &.active {
           background-color: rgba(#fff, .3);
         }
 
