@@ -1,6 +1,5 @@
 .cs-container {
 
-
   .cs-placeholder {
     min-width: 400px;
     max-width: 100%;
@@ -25,13 +24,17 @@
         cursor: pointer;
 
         &:hover, &.active {
-          background-color: rgba(#fff, .3);
+          background-color: rgba(#fff, .1);
         }
 
       }
 
     }
 
+  }
+
+  .cs-backdrop {
+    background-color: rgba(#000, .3);
   }
 
 }
