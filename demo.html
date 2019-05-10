@@ -46,6 +46,10 @@
             background: darkgray;
         }
 
+        .wrapper-4 {
+            background: lavenderblush;
+        }
+
         /*select {*/
         /*    width: 400px;*/
         /*}*/
@@ -99,6 +103,21 @@
 
 </div>
 
+<div class="wrapper wrapper-4">
+
+    <h2>Usage with extra data and optionFactory</h2>
+
+    <select id="custom-select-4" class="foo" multiple>
+
+        <option>-- Choose any element --</option>
+        <option value="1" data-icon="menu" data-desc="This is a description of option number one">This is option number one</option>
+        <option value="2" data-icon="menu" data-desc="This is a description of option number two">This is option number two</option>
+        <option value="3" data-icon="menu" data-desc="This is a description of option number three">This is option number three</option>
+
+    </select>
+
+</div>
+
 
 <script src="dist/custom-select.js"></script>
 
@@ -124,6 +143,8 @@
         }
 
     });
+
+    const cs4 = new CustomSelect('#custom-select-4');
 
 </script>
 
