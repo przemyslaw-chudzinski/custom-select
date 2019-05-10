@@ -1,4 +1,5 @@
 const _ = require('lodash');
+const defaultConfig = require('./default-config');
 
 // Private members
 const _config = new WeakMap();
@@ -10,6 +11,7 @@ const _csOptionsContainer = new WeakMap();
 const _csPlaceholderContainer = new WeakMap();
 const _csIsMultiple = new WeakMap();
 const _csOptionsList = new WeakMap();
+const _csBackdrop = new WeakMap();
 // Private methods
 const _init = Symbol();
 const _initSingleElement = Symbol();
@@ -23,19 +25,9 @@ const _updateOriginalSelectValue = Symbol();
 const _updateCopySelectValue = Symbol();
 const _initValue = Symbol();
 const _updateOptions = Symbol();
+const _createBackdrop = Symbol();
 
-// Default Config
-const defaultConfig = {
 
-    templateFn(option) {
-        return option.innerText;
-    },
-
-    mapTplToPlaceholder(optionTemplate) {
-        return optionTemplate.innerText;
-    }
-
-};
 
 class CustomSelect {
 
@@ -66,7 +58,7 @@ class CustomSelect {
         this[_initValue]();
 
         // Close options list when user click somewhere at document
-        document.body.addEventListener('click', this.close.bind(this));
+        _config.get(this).closeOnBackdropClick && _csBackdrop.get(this).addEventListener('click', this.close.bind(this));
     }
 
     // Init single select element
@@ -97,11 +89,16 @@ class CustomSelect {
         // Create options wrapper
         const csOptions = this[_createOptions](customElement);
 
+        // Create backdrop container;
+        const csBackdrop = this[_createBackdrop]();
+        _csBackdrop.set(this, csBackdrop);
+
         // Inserting containers into main container
         csOriginalSelectContainer.append(customElement);
         csContainer.append(csOriginalSelectContainer);
         csContainer.append(csPlaceholder);
         csContainer.append(csOptions);
+        csContainer.append(csBackdrop);
 
         // Create private member for csContainer;
         _csContainer.set(this, csContainer);
@@ -228,12 +225,19 @@ class CustomSelect {
         options.length && options.forEach(opt => opt.dataset.optionId === _customSelectCopy.get(this).value ? opt.classList.add('active') : opt.classList.remove('active'));
     }
 
+    [_createBackdrop]() {
+        const csBackdrop = document.createElement('div');
+        csBackdrop.classList.add('cs-backdrop');
+        return csBackdrop;
+    }
+
     // Public API
 
     // Open options list
     open() {
         const event = new CustomEvent('cs:opened');
         _csOptionsContainer.get(this).classList.add('active');
+        _csBackdrop.get(this).classList.add('active');
         dispatchEvent(event);
     }
 
@@ -241,6 +245,7 @@ class CustomSelect {
     close() {
         const event = new CustomEvent('cs:closed');
         _csOptionsContainer.get(this).classList.remove('active');
+        _csBackdrop.get(this).classList.remove('active');
         dispatchEvent(event);
     }
 
