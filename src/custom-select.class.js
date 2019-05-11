@@ -194,7 +194,7 @@ class CustomSelect {
             }
 
             // Create change event
-            const changeEvent = new CustomEvent('cs:change', {detail: _customSelectCopy.get(this).selectedOptions.map(opt => opt.value)});
+            const changeEvent = new CustomEvent('cs:change', {detail: [].map.call(_customSelectCopy.get(this).selectedOptions, opt => opt.value)});
             dispatchEvent(changeEvent);
 
         });
