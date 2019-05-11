@@ -5,11 +5,6 @@ module.exports = {
         return option.innerText;
     },
 
-    // Deprecated
-    mapTplToPlaceholder(optionTemplate) {
-        return optionTemplate.innerText;
-    },
-
     /**
      * @desc
      * @param values Array<any>
