@@ -9,6 +9,8 @@ module.exports = {
         return optionTemplate.innerText;
     },
 
-    closeOnBackdropClick: true
+    closeOnBackdropClick: true,
+
+    hasBackdrop: true
 
 };
