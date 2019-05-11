@@ -193,8 +193,8 @@
             `;
         },
 
-        mapTplToPlaceholder(optionTemplate) {
-            return optionTemplate.querySelector('.label').innerText;
+        placeholderTplFn(values) {
+            return values.map(val => val.innerText + ' -- custom --').join(', ');
         }
 
     });

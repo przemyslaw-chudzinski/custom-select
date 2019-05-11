@@ -118,7 +118,9 @@ class CustomSelect {
 
             copied.innerText = option.innerText;
             // copied.dataset = option.dataset;
-            copied.value = option.value;
+            // copied.value = option.value || null;
+            // option.hasAttribute('value') ? copied.value = option.value : "";
+            copied.value = option.hasAttribute('value') ? option.value : "";
             // Assign selected attribute into relevant option
             option.selected ? copied.setAttribute('selected', '') : null;
             // copy data attrs
@@ -166,10 +168,10 @@ class CustomSelect {
             event.preventDefault();
             event.stopPropagation();
 
+            // TODO: Should be refactored entire if else statement
             if (_csIsMultiple.get(this)) {
 
                 // Update copySelect options list === updateCopySelectValue
-                // TODO: Should be refactored
                 const options = _customSelectCopy.get(this).options;
                 options.length && [].forEach.call(options, opt => {
                     if (opt.value === option.value) opt.selected = !option.selected;
@@ -192,7 +194,7 @@ class CustomSelect {
             }
 
             // Create change event
-            const changeEvent = new CustomEvent('cs:change', {detail: _customSelectCopy.get(this).selectedOptions});
+            const changeEvent = new CustomEvent('cs:change', {detail: _customSelectCopy.get(this).selectedOptions.map(opt => opt.value)});
             dispatchEvent(changeEvent);
 
         });
@@ -228,9 +230,7 @@ class CustomSelect {
         if (!(values instanceof HTMLCollection)) throw new Error('value must be an instance of HTMLCollection');
 
         // Update placeholder text
-        // TODO: Pass appropriate factory function
-        _csPlaceholderContainer.get(this).innerText = values && values.length ? [].map.call(values, val => val.innerText).join(', ') : '';
-
+        _csPlaceholderContainer.get(this).innerHTML = values && values.length ? _config.get(this).placeholderTplFn.call(this, [].map.call(values, val => val)) : 'default placeholder';
     }
 
     /**
