@@ -11,6 +11,7 @@ const _csPlaceholderContainer = new WeakMap();
 const _csIsMultiple = new WeakMap();
 const _csOptionsList = new WeakMap();
 const _csBackdrop = new WeakMap();
+const _csClearAllBtn = new WeakMap();
 // Private methods
 const _init = Symbol();
 const _initSingleElement = Symbol();
@@ -23,6 +24,7 @@ const _updatePlaceholder = Symbol();
 const _initValue = Symbol();
 const _updateOptions = Symbol();
 const _createBackdrop = Symbol();
+const _createClearAllBtn = Symbol();
 
 class CustomSelect {
 
@@ -53,7 +55,10 @@ class CustomSelect {
         this[_initValue]();
 
         // Close options list when user click somewhere at document
-        _config.get(this).closeOnBackdropClick && _csBackdrop.get(this) && _csBackdrop.get(this).addEventListener('click', this.close.bind(this));
+        _config.get(this).closeOnBackdropClick && _csBackdrop.has(this) && _csBackdrop.get(this).addEventListener('click', this.close.bind(this));
+
+        // Clear selected options
+        _config.get(this).showClearAllButton && _csClearAllBtn.has(this) && _csClearAllBtn.get(this).addEventListener('click', this.clear.bind(this));
     }
 
     // Init single select element
@@ -82,6 +87,13 @@ class CustomSelect {
         const csOriginalSelectContainer = document.createElement('div');
         csOriginalSelectContainer.classList.add('cs-original-select-container');
 
+        // Create clear all button
+        let clearAllButton = null;
+        if (_config.get(this).showClearAllButton) {
+            clearAllButton = this[_createClearAllBtn]();
+            _csClearAllBtn.set(this, clearAllButton);
+        }
+
         // Create container for placeholder. This is an layer which represents hidden select element on website
         const csPlaceholder = this[_createPlaceholder]();
 
@@ -101,6 +113,7 @@ class CustomSelect {
         csContainer.append(csPlaceholder);
         csContainer.append(csOptions);
         csBackdrop && csContainer.append(csBackdrop);
+        clearAllButton && csContainer.append(clearAllButton);
 
         // Create private member for csContainer;
         _csContainer.set(this, csContainer);
@@ -234,14 +247,13 @@ class CustomSelect {
     /**
      * @desc Update placeholder
      * @param values HTMLCollection
-     * TODO: Go over about it. How to manage showing data at placeholder ?
-     * TODO: Pass placeholder factory
      */
     [_updatePlaceholder](values) {
         if (!(values instanceof HTMLCollection)) throw new Error('value must be an instance of HTMLCollection');
 
+
         // Update placeholder text
-        _csPlaceholderContainer.get(this).innerHTML = values && values.length ? _config.get(this).placeholderTplFn.call(this, [].map.call(values, val => val)) : 'default placeholder';
+        _csPlaceholderContainer.get(this).innerHTML = values && values.length ? _config.get(this).placeholderTplFn.call(this, [].map.call(values, val => val)) : _config.get(this).defaultPlaceholderFn.call(this);
     }
 
     /**
@@ -284,6 +296,17 @@ class CustomSelect {
         const csBackdrop = document.createElement('div');
         csBackdrop.classList.add('cs-backdrop');
         return csBackdrop;
+    }
+
+    /**
+     * @desc Create clear all btn DOM structure
+     * @returns {HTMLSpanElement}
+     */
+    [_createClearAllBtn]() {
+        const clearAllButton = document.createElement('span');
+        clearAllButton.classList.add('cs-clear-all-btn');
+        clearAllButton.innerHTML = "&times;";
+        return clearAllButton;
     }
 
     // Public API
@@ -335,6 +358,22 @@ class CustomSelect {
     disable() {
         _customSelectCopy.get(this).disabled = true;
         _csContainer.get(this).classList.add('cs-disabled');
+    }
+
+    /**
+     * @desc Clear all selections
+     */
+    clear() {
+        const options = _customSelectCopy.get(this).options;
+        options.length && [].forEach.call(options, opt => {
+            opt.selected = false;
+            opt.removeAttribute('selected');
+        });
+
+        console.log(_customSelectCopy.get(this).selectedOptions)
+
+        this[_updatePlaceholder](_customSelectCopy.get(this).selectedOptions);
+        this[_updateOptions]();
     }
 
 
