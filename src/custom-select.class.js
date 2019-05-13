@@ -168,11 +168,13 @@ class CustomSelect {
             event.preventDefault();
             event.stopPropagation();
 
+            const customSelectCopy = _customSelectCopy.get(this);
+
             // TODO: Should be refactored entire if else statement
             if (_csIsMultiple.get(this)) {
 
                 // Update copySelect options list === updateCopySelectValue
-                const options = _customSelectCopy.get(this).options;
+                const options = customSelectCopy.options;
                 options.length && [].forEach.call(options, opt => {
                     if (opt.value === option.value) opt.selected = !option.selected;
                 });
@@ -183,7 +185,7 @@ class CustomSelect {
             } else {
 
                 // Update copySelect options list
-                const options = _customSelectCopy.get(this).options;
+                const options = customSelectCopy.options;
                 options.length && [].forEach.call(options, opt => opt.selected = opt.value === option.value);
 
                 // update placeholder and options list
@@ -194,8 +196,14 @@ class CustomSelect {
             }
 
             // Create change event
-            const changeEvent = new CustomEvent('cs:change', {detail: [].map.call(_customSelectCopy.get(this).selectedOptions, opt => opt.value)});
-            dispatchEvent(changeEvent);
+            const detail = {
+                values: [].map.call(customSelectCopy.selectedOptions, opt => opt.value),
+                originalOptions: customSelectCopy.selectedOptions,
+                selectedOption: option
+            };
+
+            const changeEvent = new CustomEvent('cs:change', {detail, bubbles: false});
+            customSelectCopy.dispatchEvent(changeEvent);
 
         });
 
@@ -284,7 +292,7 @@ class CustomSelect {
         const event = new CustomEvent('cs:opened');
         _csOptionsContainer.get(this).classList.add('active');
         _csBackdrop.get(this).classList.add('active');
-        dispatchEvent(event);
+        _customSelectCopy.get(this).dispatchEvent(event);
     }
 
     /**
@@ -294,16 +302,16 @@ class CustomSelect {
         const event = new CustomEvent('cs:closed');
         _csOptionsContainer.get(this).classList.remove('active');
         _csBackdrop.get(this).classList.remove('active');
-        dispatchEvent(event);
+        _customSelectCopy.get(this).dispatchEvent(event);
     }
 
     /**
      * @desc cs event listener
      * @param eventName
+     * @param handler
      */
-    listen(eventName) {
-        // 1. validate event name
-        // 2. add event listener
+    listen(eventName, handler = () => {}) {
+        _customSelectCopy.get(this).addEventListener(eventName, handler);
     }
 
 
