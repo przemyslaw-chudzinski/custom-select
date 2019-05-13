@@ -48,4 +48,23 @@
     cursor: not-allowed;
   }
 
+  .cs-clear-all-btn {
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    cursor: pointer;
+    background-color: #eeeeee;
+    font-size: rem-calc(14px);
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    &:hover {
+      background-color: #ddd;
+    }
+  }
+
 }
