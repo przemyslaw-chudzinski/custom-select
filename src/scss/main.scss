@@ -44,4 +44,8 @@
     }
   }
 
+  &.cs-disabled .cs-placeholder {
+    cursor: not-allowed;
+  }
+
 }
