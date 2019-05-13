@@ -73,6 +73,9 @@ class CustomSelect {
         // Create main container
         const csContainer = document.createElement('div');
         csContainer.classList.add('cs-container');
+        // Add extra css class when select is disabled
+        _customSelectCopy.get(this).disabled && csContainer.classList.add('cs-disabled');
+        // Add extra css class when select is multiple
         _csIsMultiple.get(this) && csContainer.classList.add('cs-multiple');
 
         // Create container for original select
@@ -108,18 +111,18 @@ class CustomSelect {
     // Create clone element of original select
     [_copyOriginalSelect](select) {
         const copy = document.createElement('select');
-        copy.id = select.id;
-        copy.classList = select.classList;
-        copy.name = select.name;
+        select.id ? copy.id = select.id : null;
+        select.classList ? copy.classList = select.classList : null;
+        select.name ? copy.name = select.name : null;
         copy.multiple = select.multiple;
+        copy.disabled = select.disabled;
 
         select.options.length && [].forEach.call(select.options, option => {
             const copied = document.createElement('option');
 
+            // copy text
             copied.innerText = option.innerText;
-            // copied.dataset = option.dataset;
-            // copied.value = option.value || null;
-            // option.hasAttribute('value') ? copied.value = option.value : "";
+            // copy value attribute
             copied.value = option.hasAttribute('value') ? option.value : "";
             // Assign selected attribute into relevant option
             option.selected ? copied.setAttribute('selected', '') : null;
@@ -289,10 +292,15 @@ class CustomSelect {
      * @desc Open options list
      */
     open() {
+        const customSelectCopy = _customSelectCopy.get(this);
+
+        // Check prevent when disabled state is switched on
+        if (customSelectCopy.disabled) return;
+
         const event = new CustomEvent('cs:opened');
         _csOptionsContainer.get(this).classList.add('active');
         _csBackdrop.get(this).classList.add('active');
-        _customSelectCopy.get(this).dispatchEvent(event);
+        customSelectCopy.dispatchEvent(event);
     }
 
     /**
@@ -312,6 +320,21 @@ class CustomSelect {
      */
     listen(eventName, handler = () => {}) {
         _customSelectCopy.get(this).addEventListener(eventName, handler);
+    }
+
+    /**
+     * @desc Set custom select as enabled
+     */
+    enable() {
+        _customSelectCopy.get(this).disabled = false;
+        _csContainer.get(this).classList.remove('cs-disabled');
+    }
+    /**
+     * @desc Set custom select as disabled
+     */
+    disable() {
+        _customSelectCopy.get(this).disabled = true;
+        _csContainer.get(this).classList.add('cs-disabled');
     }
 
 

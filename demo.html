@@ -71,7 +71,7 @@
 
 <div class="wrapper">
 
-    <select id="custom-select" class="foo">
+    <select id="custom-select" class="foo" disabled>
 
         <option>-- Choose any element --</option>
         <option value="1" data-icon="menu">This is option number one</option>
@@ -200,7 +200,7 @@
     });
 
     cs.listen('cs:change', event => {
-        console.log(event, 'change');
+        console.log(event.detail.selectedOption, 'change');
     });
 
 </script>

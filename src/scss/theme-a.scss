@@ -40,4 +40,8 @@
     background-color: rgba(#000, .3);
   }
 
+  &.cs-disabled .cs-placeholder {
+    opacity: .5;
+  }
+
 }
