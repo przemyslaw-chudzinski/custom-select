@@ -154,6 +154,27 @@
 
 </div>
 
+<div class="wrapper wrapper-7">
+
+    <h2>Tests about placeholder</h2>
+
+    <form method="post" action="http://localhost/cs-test/index.php">
+
+        <select id="custom-select-6" class="foo" name="selected_values">
+
+<!--            <option value="">asd</option>-->
+            <option value="1" data-icon="menu" data-desc="This is a description of option number one">This is option number one</option>
+            <option value="2" data-icon="menu" data-desc="This is a description of option number two">This is option number two</option>
+            <option value="3" data-icon="menu" data-desc="This is a description of option number three">This is option number three</option>
+
+        </select>
+
+        <button type="submit">Wyślij</button>
+
+    </form>
+
+</div>
+
 
 <script src="dist/custom-select.js"></script>
 
@@ -201,6 +222,10 @@
 
     cs.listen('cs:change', event => {
         console.log(event.detail.selectedOption, 'change');
+    });
+
+    const cs6 = new CustomSelect('#custom-select-6', {
+
     });
 
 </script>
