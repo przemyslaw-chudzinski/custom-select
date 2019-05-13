@@ -141,7 +141,7 @@
 
         <select id="custom-select-5" class="foo" name="selected_value[]" multiple>
 
-            <option>-- Choose any element --</option>
+<!--            <option>&#45;&#45; Choose any element &#45;&#45;</option>-->
             <option selected value="1" data-icon="menu" data-desc="This is a description of option number one">This is option number one</option>
             <option selected value="2" data-icon="menu" data-desc="This is a description of option number two">This is option number two</option>
             <option value="3" data-icon="menu" data-desc="This is a description of option number three">This is option number three</option>
@@ -216,6 +216,14 @@
 
         placeholderTplFn(values) {
             return values.map(val => val.innerText + ' -- custom --').join(', ');
+        },
+
+        defaultPlaceholderFn() {
+            return `
+
+                <span class="">some</span> and another
+
+            `;
         }
 
     });
@@ -225,6 +233,14 @@
     });
 
     const cs6 = new CustomSelect('#custom-select-6', {
+
+        defaultPlaceholderFn() {
+            return `
+
+                <span class="">some</span> and another
+
+            `;
+        }
 
     });
 
