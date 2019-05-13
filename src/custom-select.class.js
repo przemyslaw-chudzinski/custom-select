@@ -25,6 +25,7 @@ const _initValue = Symbol();
 const _updateOptions = Symbol();
 const _createBackdrop = Symbol();
 const _createClearAllBtn = Symbol();
+const _createDefaultOption = Symbol();
 
 class CustomSelect {
 
@@ -61,15 +62,23 @@ class CustomSelect {
         _config.get(this).showClearAllButton && _csClearAllBtn.has(this) && _csClearAllBtn.get(this).addEventListener('click', this.clear.bind(this));
     }
 
-    // Init single select element
+    // Init single custom select
     [_initSingleElement](customElement) {
         // Clone original select element
         const customElementCopy = this[_copyOriginalSelect](customElement);
         _customSelectCopy.set(this, customElementCopy);
-        // Create main wrapper
-        const cSContainer = this[_createCsContainer](customElementCopy);
 
-        customElement.parentNode.insertBefore(cSContainer, customElement);
+        // Create default placeholder for not multiple
+        if (!_csIsMultiple.get(this)) {
+            const placeholderOption = this[_createDefaultOption]();
+            placeholderOption.innerHTML = _config.get(this).defaultPlaceholderFn.call(this);
+            customElementCopy.insertBefore(placeholderOption, customElementCopy.querySelector('option:first-child'));
+        }
+
+        // Create main wrapper
+        const csContainer = this[_createCsContainer](customElementCopy);
+
+        customElement.parentNode.insertBefore(csContainer, customElement);
         customElement.remove();
     }
 
@@ -135,7 +144,7 @@ class CustomSelect {
 
             // copy text
             copied.innerText = option.innerText;
-            // copy value attribute
+            // copy value attribute and prepare default placeholder
             copied.value = option.hasAttribute('value') ? option.value : "";
             // Assign selected attribute into relevant option
             option.selected ? copied.setAttribute('selected', '') : null;
@@ -172,6 +181,9 @@ class CustomSelect {
 
     // Create single option
     [_createOption](option) {
+        // Can render
+        if ('placeholder' in option.dataset) return;
+
         // create single options list element
         const singleOption = document.createElement('li');
 
@@ -309,6 +321,17 @@ class CustomSelect {
         return clearAllButton;
     }
 
+    /**
+     * @desc Create default option
+     * @returns {HTMLOptionElement}
+     */
+    [_createDefaultOption]() {
+        const placeholderOption = document.createElement('option');
+        placeholderOption.value = "";
+        placeholderOption.dataset.placeholder = "";
+        return placeholderOption;
+    }
+
     // Public API
 
     /**
@@ -369,8 +392,6 @@ class CustomSelect {
             opt.selected = false;
             opt.removeAttribute('selected');
         });
-
-        console.log(_customSelectCopy.get(this).selectedOptions)
 
         this[_updatePlaceholder](_customSelectCopy.get(this).selectedOptions);
         this[_updateOptions]();
