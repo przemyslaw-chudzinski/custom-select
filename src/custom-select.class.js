@@ -1,5 +1,15 @@
 const defaultConfig = require('./default-config');
-
+const {
+    createBackdrop,
+    createPlaceholder,
+    createClearAllButton,
+    createPlaceholderOption,
+    createCsContainer,
+    createOriginalSelectContainer,
+    createOptionsContainer,
+    createOptionsList,
+    createSingleOption
+} = require('./dom-factories');
 // Private properties
 const _config = new WeakMap();
 const _selector = new WeakMap();
@@ -19,13 +29,10 @@ const _createCsContainer = Symbol();
 const _copyOriginalSelect = Symbol();
 const _createOptions = Symbol();
 const _createOption = Symbol();
-const _createPlaceholder = Symbol();
+const _initPlaceholder = Symbol();
 const _updatePlaceholder = Symbol();
 const _initValue = Symbol();
 const _updateOptions = Symbol();
-const _createBackdrop = Symbol();
-const _createClearAllBtn = Symbol();
-const _createDefaultOption = Symbol();
 
 class CustomSelect {
 
@@ -70,8 +77,7 @@ class CustomSelect {
 
         // Create default placeholder for not multiple
         if (!_csIsMultiple.get(this)) {
-            const placeholderOption = this[_createDefaultOption]();
-            placeholderOption.innerHTML = _config.get(this).defaultPlaceholderFn.call(this);
+            const placeholderOption = createPlaceholderOption.call(this, _config.get(this).defaultPlaceholderFn);
             customElementCopy.insertBefore(placeholderOption, customElementCopy.querySelector('option:first-child'));
         }
 
@@ -85,26 +91,20 @@ class CustomSelect {
     // Create basic structure for custom select
     [_createCsContainer](customElement) {
         // Create main container
-        const csContainer = document.createElement('div');
-        csContainer.classList.add('cs-container');
-        // Add extra css class when select is disabled
-        _customSelectCopy.get(this).disabled && csContainer.classList.add('cs-disabled');
-        // Add extra css class when select is multiple
-        _csIsMultiple.get(this) && csContainer.classList.add('cs-multiple');
+        const csContainer = createCsContainer.call(this, _customSelectCopy.get(this).disabled,  _csIsMultiple.get(this));
 
         // Create container for original select
-        const csOriginalSelectContainer = document.createElement('div');
-        csOriginalSelectContainer.classList.add('cs-original-select-container');
+        const csOriginalSelectContainer = createOriginalSelectContainer.call(this);
 
         // Create clear all button
         let clearAllButton = null;
         if (_config.get(this).showClearAllButton) {
-            clearAllButton = this[_createClearAllBtn]();
+            clearAllButton = createClearAllButton.call(this);
             _csClearAllBtn.set(this, clearAllButton);
         }
 
-        // Create container for placeholder. This is an layer which represents hidden select element on website
-        const csPlaceholder = this[_createPlaceholder]();
+        // Create container for placeholder and add event listener for click event on it. This is an layer which represents hidden select element on website
+        const csPlaceholder = this[_initPlaceholder]();
 
         // Create options wrapper
         const csOptions = this[_createOptions](customElement);
@@ -112,11 +112,11 @@ class CustomSelect {
         // Create backdrop container;
         let csBackdrop = null;
         if (_config.get(this).hasBackdrop) {
-            csBackdrop = this[_createBackdrop]();
+            csBackdrop = createBackdrop.call(this);
             _csBackdrop.set(this, csBackdrop);
         }
 
-        // Inserting containers into main container
+        // Insert containers into main container
         csOriginalSelectContainer.append(customElement);
         csContainer.append(csOriginalSelectContainer);
         csContainer.append(csPlaceholder);
@@ -160,12 +160,10 @@ class CustomSelect {
     // Create options list
     [_createOptions](customElement) {
         // create options list container
-        const csOptions = document.createElement('div');
-        csOptions.classList.add('cs-options');
+        const csOptions = createOptionsContainer.call(this);
 
         // create options list
-        const optionsList = document.createElement('ul');
-        optionsList.classList.add('cs-options-list');
+        const optionsList = createOptionsList.call(this);
 
         // populate options list
         customElement.options.length && [].forEach.call(customElement.options, option => optionsList.append(this[_createOption](option)));
@@ -184,12 +182,8 @@ class CustomSelect {
         // Can render
         if ('placeholder' in option.dataset) return;
 
-        // create single options list element
-        const singleOption = document.createElement('li');
-
-        singleOption.classList.add('cs-option');
-        singleOption.innerHTML = _config.get(this).templateFn.call(this, option);
-        singleOption.dataset.optionId = option.value;
+        // Create single option DOM structure
+        const singleOption = createSingleOption.call(this, option, _config.get(this).templateFn);
 
         singleOption.addEventListener('click', event => {
 
@@ -239,10 +233,10 @@ class CustomSelect {
     }
 
     // create placeholder DOM structure
-    [_createPlaceholder]() {
+    [_initPlaceholder]() {
         // create placeholder element
-        const csPlaceholder = document.createElement('div');
-        csPlaceholder.classList.add('cs-placeholder');
+        const csPlaceholder = createPlaceholder.call(this);
+        _csPlaceholderContainer.set(this, csPlaceholder);
 
         // assign click event on placeholder element
         csPlaceholder.addEventListener('click', event => {
@@ -250,8 +244,6 @@ class CustomSelect {
             event.stopPropagation();
             this.open();
         });
-
-        _csPlaceholderContainer.set(this, csPlaceholder);
 
         return csPlaceholder;
     }
@@ -262,7 +254,6 @@ class CustomSelect {
      */
     [_updatePlaceholder](values) {
         if (!(values instanceof HTMLCollection)) throw new Error('value must be an instance of HTMLCollection');
-
 
         // Update placeholder text
         _csPlaceholderContainer.get(this).innerHTML = values && values.length ? _config.get(this).placeholderTplFn.call(this, [].map.call(values, val => val)) : _config.get(this).defaultPlaceholderFn.call(this);
@@ -298,38 +289,6 @@ class CustomSelect {
             [].forEach.call(selectedOptions, so => so.value === optElement.dataset.optionId && optElement.classList.add('active'));
 
         });
-    }
-
-    /**
-     * @desc Create backdrop DOM structure
-     * @returns {HTMLDivElement}
-     */
-    [_createBackdrop]() {
-        const csBackdrop = document.createElement('div');
-        csBackdrop.classList.add('cs-backdrop');
-        return csBackdrop;
-    }
-
-    /**
-     * @desc Create clear all btn DOM structure
-     * @returns {HTMLSpanElement}
-     */
-    [_createClearAllBtn]() {
-        const clearAllButton = document.createElement('span');
-        clearAllButton.classList.add('cs-clear-all-btn');
-        clearAllButton.innerHTML = "&times;";
-        return clearAllButton;
-    }
-
-    /**
-     * @desc Create default option
-     * @returns {HTMLOptionElement}
-     */
-    [_createDefaultOption]() {
-        const placeholderOption = document.createElement('option');
-        placeholderOption.value = "";
-        placeholderOption.dataset.placeholder = "";
-        return placeholderOption;
     }
 
     // Public API
