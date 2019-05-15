@@ -262,7 +262,9 @@ class CustomSelect {
         if (!(values instanceof HTMLCollection)) throw new Error('value must be an instance of HTMLCollection');
 
         // Update placeholder text
-        _csPlaceholderContainer.get(this).innerHTML = values && values.length ? _config.get(this).placeholderTplFn.call(this, [].map.call(values, val => val, _csIsMultiple.get(this))) : _config.get(this).defaultPlaceholderFn.call(this);
+        _csPlaceholderContainer.get(this).innerHTML = values && values.length ?
+            _config.get(this).placeholderTplFn.call(this, [].map.call(values, val => val), _csIsMultiple.get(this)) :
+            _config.get(this).defaultPlaceholderFn.call(this, _csIsMultiple.get(this));
     }
 
     /**
