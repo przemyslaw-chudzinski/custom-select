@@ -14,6 +14,7 @@ const createBackdrop = () => {
 const createPlaceholder = () => {
     const csPlaceholder = document.createElement('div');
     csPlaceholder.classList.add('cs-placeholder');
+    csPlaceholder.setAttribute('tabindex', '0');
     return csPlaceholder;
 };
 /**
@@ -24,6 +25,8 @@ const createClearAllButton = () => {
     const clearAllButton = document.createElement('span');
     clearAllButton.classList.add('cs-clear-all-btn');
     clearAllButton.innerHTML = "&times;";
+    clearAllButton.title = 'Clear';
+    clearAllButton.setAttribute('tabindex', '0');
     return clearAllButton;
 };
 /**
