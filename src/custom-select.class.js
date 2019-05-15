@@ -12,8 +12,6 @@ const {
 } = require('./dom-factories');
 // Private properties
 const _config = new WeakMap();
-const _selector = new WeakMap();
-const _customSelect = new WeakMap();
 const _customSelectCopy = new WeakMap();
 const _csContainer = new WeakMap();
 const _csOptionsContainer = new WeakMap();
@@ -31,7 +29,7 @@ const _createOptions = Symbol();
 const _createOption = Symbol();
 const _initPlaceholder = Symbol();
 const _updatePlaceholder = Symbol();
-const _initValue = Symbol();
+const _updateCustomSelect = Symbol();
 const _updateOptions = Symbol();
 
 class CustomSelect {
@@ -40,27 +38,25 @@ class CustomSelect {
         // Initial error handling
         if (!selector) throw new Error('You must specify selector');
 
-        const select = document.querySelector(selector);
+        const selectElement = document.querySelector(selector);
 
         // Override default config
         _config.set(this, {...defaultConfig, ...config});
 
         // Assign private or global members
-        _selector.set(this, selector);
-        _customSelect.set(this, select);
-        _csIsMultiple.set(this, select.multiple);
+        _csIsMultiple.set(this, selectElement.multiple);
 
         // Init DOM structure
-        this[_init]();
+        this[_init](selectElement);
     }
 
     // Init
-    [_init]() {
+    [_init](selectElement) {
         // Init select and DOM
-        this[_initSingleElement](_customSelect.get(this));
+        this[_initSingleElement](selectElement);
 
         // Init value and DOM of select
-        this[_initValue]();
+        this[_updateCustomSelect]();
 
         // Close options list when user click somewhere at document
         _config.get(this).closeOnBackdropClick && _csBackdrop.has(this) && _csBackdrop.get(this).addEventListener('click', this.close.bind(this));
@@ -70,9 +66,9 @@ class CustomSelect {
     }
 
     // Init single custom select
-    [_initSingleElement](customElement) {
+    [_initSingleElement](selectElement) {
         // Clone original select element
-        const customElementCopy = this[_copyOriginalSelect](customElement);
+        const customElementCopy = this[_copyOriginalSelect](selectElement);
         _customSelectCopy.set(this, customElementCopy);
 
         // Create default placeholder for not multiple
@@ -84,8 +80,9 @@ class CustomSelect {
         // Create main wrapper
         const csContainer = this[_createCsContainer](customElementCopy);
 
-        customElement.parentNode.insertBefore(csContainer, customElement);
-        customElement.remove();
+        // Wrap selectElement in csContainer
+        selectElement.parentNode.insertBefore(csContainer, selectElement);
+        selectElement.remove();
     }
 
     // Create basic structure for custom select
@@ -132,6 +129,7 @@ class CustomSelect {
 
     // Create clone element of original select
     [_copyOriginalSelect](select) {
+        // Copy select attributes
         const copy = document.createElement('select');
         select.id ? copy.id = select.id : null;
         select.classList ? copy.classList = select.classList : null;
@@ -139,6 +137,7 @@ class CustomSelect {
         copy.multiple = select.multiple;
         copy.disabled = select.disabled;
 
+        // Copy options list
         select.options.length && [].forEach.call(select.options, option => {
             const copied = document.createElement('option');
 
@@ -180,7 +179,7 @@ class CustomSelect {
     // Create single option
     [_createOption](option) {
         // Can render
-        if ('placeholder' in option.dataset) return;
+        if ('placeholder' in option.dataset) return '';
 
         // Create single option DOM structure
         const singleOption = createSingleOption.call(this, option, _config.get(this).templateFn);
@@ -191,28 +190,26 @@ class CustomSelect {
             event.stopPropagation();
 
             const customSelectCopy = _customSelectCopy.get(this);
+            const options = customSelectCopy.options;
 
-            // TODO: Should be refactored entire if else statement
             if (_csIsMultiple.get(this)) {
 
-                // Update copySelect options list === updateCopySelectValue
-                const options = customSelectCopy.options;
                 options.length && [].forEach.call(options, opt => {
                     if (opt.value === option.value) opt.selected = !option.selected;
                 });
 
                 // update placeholder and options list
-                this[_initValue]();
+                this[_updateCustomSelect]();
 
             } else {
 
                 // Update copySelect options list
-                const options = customSelectCopy.options;
                 options.length && [].forEach.call(options, opt => opt.selected = opt.value === option.value);
 
                 // update placeholder and options list
-                this[_initValue]();
+                this[_updateCustomSelect]();
 
+                // Close custom select options list
                 this.close();
 
             }
@@ -242,6 +239,7 @@ class CustomSelect {
         csPlaceholder.addEventListener('click', event => {
             event.preventDefault();
             event.stopPropagation();
+            // Open when user clicks on it
             this.open();
         });
 
@@ -261,9 +259,8 @@ class CustomSelect {
 
     /**
      * @desc Init value and DOM structure
-     * TODO: Should be renamed
      */
-    [_initValue]() {
+    [_updateCustomSelect]() {
 
         // update text in placeholder
         this[_updatePlaceholder](_customSelectCopy.get(this).selectedOptions);
