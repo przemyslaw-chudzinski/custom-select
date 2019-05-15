@@ -243,6 +243,9 @@ class CustomSelect {
             this.open();
         });
 
+        // Open on focus
+        csPlaceholder.addEventListener('focus', this.open.bind(this));
+
         return csPlaceholder;
     }
 
