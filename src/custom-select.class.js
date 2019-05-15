@@ -311,7 +311,7 @@ class CustomSelect {
 
         const event = new CustomEvent('cs:opened');
         _csOptionsContainer.get(this).classList.add('active');
-        _csBackdrop.get(this).classList.add('active');
+        _csBackdrop.has(this) && _csBackdrop.get(this).classList.add('active');
         customSelectCopy.dispatchEvent(event);
     }
 
@@ -321,7 +321,7 @@ class CustomSelect {
     close() {
         const event = new CustomEvent('cs:closed');
         _csOptionsContainer.get(this).classList.remove('active');
-        _csBackdrop.get(this).classList.remove('active');
+        _csBackdrop.has(this) && _csBackdrop.get(this).classList.remove('active');
         _customSelectCopy.get(this).dispatchEvent(event);
     }
 
