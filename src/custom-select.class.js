@@ -37,8 +37,13 @@ class CustomSelect {
     constructor(selector, config = {}) {
         // Initial error handling
         if (!selector) throw new Error('You must specify selector');
+        if(typeof config !== 'object') throw new Error('config must be an object');
 
         const selectElement = document.querySelector(selector);
+
+        if (!selectElement) throw new Error('Cannot create instance, #' + selector + ' not found');
+
+        if (!(selectElement instanceof HTMLSelectElement)) throw new Error('Cannot create object. CustomSelect instance can be created only on select elements');
 
         // Override default config
         _config.set(this, {...defaultConfig, ...config});
