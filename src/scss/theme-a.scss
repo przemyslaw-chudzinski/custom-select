@@ -13,6 +13,15 @@
 
     background-color: black;
     font-family: sans-serif;
+    opacity: 0;
+    transform: translateY(-10%);
+    //top: -60%;
+    transition: all .2s ease-in-out;
+
+    &.active {
+      opacity: 1;
+      transform: translateY(-5%);
+    }
 
     .cs-options-list {
       display: block;
