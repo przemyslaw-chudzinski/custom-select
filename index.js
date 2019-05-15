@@ -1,3 +1,3 @@
-const CustomSelect = require('./custom-select.class');
+const CustomSelect = require('./src/custom-select.class');
 
 if (!('CustomSelect' in window)) window.CustomSelect = CustomSelect;
