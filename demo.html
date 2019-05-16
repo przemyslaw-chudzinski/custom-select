@@ -219,12 +219,10 @@
         },
 
         placeholderTplFn(values, multiple) {
-            console.log('placeholderTplFn', multiple);
-            return values.map(val => val.innerText + ' -- custom --').join(', ');
+            return values.map(val => '<span data-removable="'+ val.value +'">' + val.innerText + ' -- custom -- </span>').join(', ');
         },
 
         defaultPlaceholderFn(multiple) {
-            console.log('defaultPlaceholderFn', multiple);
             return `
 
                 <span class="">some</span> and another
