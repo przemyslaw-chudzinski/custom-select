@@ -1,4 +1,5 @@
 const defaultConfig = require('./default-config');
+const keyCodes = require('./key-codes');
 const {
     createBackdrop,
     createPlaceholder,
@@ -42,7 +43,6 @@ class CustomSelect {
         const selectElement = document.querySelector(selector);
 
         if (!selectElement) throw new Error('Cannot create instance, #' + selector + ' not found');
-
         if (!(selectElement instanceof HTMLSelectElement)) throw new Error('Cannot create object. CustomSelect instance can be created only on select elements');
 
         // Override default config
@@ -68,6 +68,8 @@ class CustomSelect {
 
         // Clear selected options
         _config.get(this).showClearAllButton && _csClearAllBtn.has(this) && _csClearAllBtn.get(this).addEventListener('click', this.clear.bind(this));
+        _config.get(this).showClearAllButton && _csClearAllBtn.has(this) && _csClearAllBtn.get(this).addEventListener('keydown', ({keyCode}) => keyCode === keyCodes.ENTER && this.clear());
+
     }
 
     // Init single custom select
