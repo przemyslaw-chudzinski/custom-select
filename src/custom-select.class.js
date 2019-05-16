@@ -11,6 +11,12 @@ const {
     createOptionsList,
     createSingleOption
 } = require('./dom-factories');
+
+const {
+    arrowDown,
+    arrowUp
+} = require('./keyboard-support');
+
 // Private properties
 const _config = new WeakMap();
 const _customSelectCopy = new WeakMap();
@@ -33,9 +39,6 @@ const _updatePlaceholder = Symbol();
 const _updateCustomSelect = Symbol();
 const _updateOptions = Symbol();
 const _controlArrows = Symbol();
-const _arrowDown = Symbol();
-const _arrowUp = Symbol();
-const _hasSelections = Symbol();
 
 class CustomSelect {
 
@@ -72,7 +75,7 @@ class CustomSelect {
 
         // Clear selected options
         _config.get(this).showClearAllButton && _csClearAllBtn.has(this) && _csClearAllBtn.get(this).addEventListener('click', this.clear.bind(this));
-        _config.get(this).showClearAllButton && _csClearAllBtn.has(this) && _csClearAllBtn.get(this).addEventListener('keydown', ({keyCode}) => keyCode === keyCodes.ENTER && this.clear());
+        _config.get(this).showClearAllButton && _csClearAllBtn.has(this) && _csClearAllBtn.get(this).addEventListener('keydown', ({keyCode}) => keyCode === keyCodes.ENTER && !_customSelectCopy.get(this).disabled && this.clear());
 
         // Open on focus
         _csPlaceholderContainer.has(this) && _csPlaceholderContainer.get(this).addEventListener('focus', this.open.bind(this));
@@ -84,37 +87,6 @@ class CustomSelect {
 
         // Close on escape
         _csContainer.has(this) && _csContainer.get(this).addEventListener('keydown', ({keyCode}) => keyCode === keyCodes.ESCAPE && this.close());
-
-        // Global key down listener
-        // _csContainer.has(this) && _csContainer.get(this).addEventListener('keydown', event => {
-        //
-        //     const {keyCode} = event;
-        //
-        //     // Handle with arrows down and up
-        //     this[_controlArrows](event);
-        //
-        //     // console.log('global keydown listener', keyCode);
-        //
-        //     // Global keyboard keys handling
-        //     switch (keyCode) {
-        //         case keyCode.ENTER:
-        //             console.log('enter');
-        //             break;
-        //         case keyCode.ESCAPE:
-        //             console.log('dupa');
-        //             break;
-        //     }
-        //
-        //
-        //
-        //
-        // });
-
-
-        // Assign to all options key down event and handle push enter
-        // _csOptionsList.has(this) &&
-        // [].forEach.call(_csOptionsList.get(this).querySelectorAll('li.cs-option'),
-        //         opt => opt.addEventListener('keydown', ({keyCode}) => keyCode === keyCodes.ENTER && console.log('asdasdasd')));
 
     }
 
@@ -344,74 +316,28 @@ class CustomSelect {
     }
 
     /**
-     * @desc Control select position on custom options list
+     * @desc Handle arrows events
      * @param event
      */
     [_controlArrows](event) {
 
         const {keyCode} = event;
 
+        const options = _csOptionsList.get(this).querySelectorAll('li.cs-option');
+
         switch (keyCode) {
             case keyCodes.ARROW_DOWN:
                 event.preventDefault();
                 event.stopPropagation();
-                this[_arrowDown]();
+                arrowDown.call(this, options);
                 break;
             case keyCodes.ARROW_UP:
                 event.preventDefault();
                 event.stopPropagation();
-                this[_arrowUp]();
+                arrowUp.call(this, options);
                 break;
         }
     }
-
-    [_arrowDown]() {
-        const optionsList = _csOptionsList.get(this);
-        const options = optionsList.querySelectorAll('li.cs-option'); // NodeList
-        let currentSelectionIndex = this[_hasSelections](options);
-
-        if(!options.length) return null;
-
-        // Remove class from current select element
-        const currentOption = options.item(currentSelectionIndex);
-        currentOption && currentOption.classList.remove('selected');
-
-        if (currentSelectionIndex + 1 >= options.length) currentSelectionIndex = -1;
-
-        // Add class into next element
-        const nextOption = options.item(currentSelectionIndex + 1);
-        nextOption.classList.add('selected');
-
-    }
-
-    [_arrowUp]() {
-        const optionsList = _csOptionsList.get(this);
-        const options = optionsList.querySelectorAll('li.cs-option'); // NodeList
-        let currentSelectionIndex = this[_hasSelections](options);
-
-        if(!options.length) return null;
-
-        // Remove class from current select element
-        const currentOption = options.item(currentSelectionIndex);
-        currentOption && currentOption.classList.remove('selected');
-
-        if (currentSelectionIndex === 0) currentSelectionIndex = options.length;
-
-        // Add class into next element
-        const prevOption = options.item(currentSelectionIndex - 1);
-        prevOption.classList.add('selected');
-
-    }
-
-    [_hasSelections](options) {
-        let index = null;
-
-        options && options.length && options.forEach((opt, i) => {
-            if (opt.classList.contains('selected')) index = i;
-        });
-
-        return index  !== null ? index : -1;
-    };
 
     // Public API
 
