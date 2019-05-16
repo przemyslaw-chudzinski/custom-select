@@ -3,7 +3,7 @@
  * @param elem
  * @param classes
  * @param attributes
- * @returns {HTMLDivElement | HTMLOptionElement | HTMLUListElement | HTMLLIElement | any}
+ * @returns {HTMLDivElement | HTMLOptionElement | HTMLUListElement | HTMLLIElement }
  */
 const createElement = (classes = [], attributes = {}, elem = 'div') => {
 
@@ -32,7 +32,7 @@ const createBackdrop = () => createElement(['cs-backdrop']);
 const createPlaceholder = () => createElement(['cs-placeholder'], {tabindex: '0'});
 /**
  * @desc Create clear all btn DOM structure
- * @returns {ActiveX.IXMLDOMElement | HTMLDivElement | any | HTMLElement}
+ * @returns {ActiveX.IXMLDOMElement | HTMLDivElement  | HTMLElement}
  */
 const createClearAllButton = () => {
     const clearAllButton = createElement(['cs-clear-all-btn'], {tabindex: "0"}, 'span');
@@ -80,7 +80,7 @@ const createOptionsContainer = () => createElement(['cs-options']);
  * @desc Create options list
  * @returns {HTMLUListElement}
  */
-const createOptionsList = () => createElement(['cs-options-list'], [], 'ul')
+const createOptionsList = () => createElement(['cs-options-list'], {}, 'ul');
 /**
  * @desc Create single option
  * @param option
