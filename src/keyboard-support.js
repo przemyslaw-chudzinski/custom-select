@@ -4,6 +4,8 @@
  * @return {number}
  */
 const hasSelections = options => {
+    if (!(options instanceof NodeList)) throw new Error('options must be an instance of NodeList class');
+
     let index = null;
 
     options && options.length && options.forEach((opt, i) => {
@@ -19,6 +21,8 @@ const hasSelections = options => {
  * @param options
  */
 const arrowDown = options => {
+    if (!(options instanceof NodeList)) throw new Error('options must be an instance of NodeList class');
+
     let currentSelectionIndex = hasSelections(options);
 
     if(!options.length) return null;
@@ -41,6 +45,8 @@ const arrowDown = options => {
  * @param options
  */
 const arrowUp = options => {
+    if (!(options instanceof NodeList)) throw new Error('options must be an instance of NodeList class');
+
     let currentSelectionIndex = hasSelections(options);
 
     if(!options.length) return null;
