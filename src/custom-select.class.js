@@ -250,6 +250,8 @@ class CustomSelect {
 
         // Open on focus
         csPlaceholder.addEventListener('focus', this.open.bind(this));
+        // Close on blur
+        csPlaceholder.addEventListener('blur', this.close.bind(this));
 
         return csPlaceholder;
     }
