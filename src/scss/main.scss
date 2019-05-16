@@ -22,12 +22,10 @@
   .cs-options {
     position: absolute;
     width: 100%;
-    //display: none;
     visibility: hidden;
     z-index: 500;
 
     &.active {
-      //display: block;
       visibility: visible;
     }
   }
