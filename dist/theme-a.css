@@ -1,1 +1,56 @@
-.cs-container{height:40px}.cs-container .cs-placeholder{min-width:400px;max-width:100%;border:1px solid #ddd;height:100%}.cs-container .cs-options{background-color:#000;font-family:sans-serif;opacity:0;-webkit-transform:translateY(-10%);transform:translateY(-10%);transition:all .2s ease-in-out}.cs-container .cs-options.active{opacity:1;-webkit-transform:translateY(-5%);transform:translateY(-5%)}.cs-container .cs-options .cs-options-list{display:block;margin:0;padding:0;list-style:none}.cs-container .cs-options .cs-options-list .cs-option{color:#fff;padding:1rem;cursor:pointer}.cs-container .cs-options .cs-options-list .cs-option.active,.cs-container .cs-options .cs-options-list .cs-option:hover{background-color:hsla(0,0%,100%,.1)}.cs-container .cs-options .cs-options-list .cs-option.selected{background-color:hsla(0,0%,100%,.5)}.cs-container .cs-backdrop{background-color:rgba(0,0,0,.3)}.cs-container.cs-disabled .cs-placeholder{opacity:.5}
+.cs-container {
+  height: 40px;
+}
+
+.cs-container .cs-placeholder {
+  min-width: 400px;
+  max-width: 100%;
+  border: 1px solid #ddd;
+  height: 100%;
+}
+
+.cs-container .cs-options {
+  background-color: black;
+  font-family: sans-serif;
+  opacity: 0;
+  -webkit-transform: translateY(-10%);
+          transform: translateY(-10%);
+  transition: all 0.2s ease-in-out;
+}
+
+.cs-container .cs-options.active {
+  opacity: 1;
+  -webkit-transform: translateY(-5%);
+          transform: translateY(-5%);
+}
+
+.cs-container .cs-options .cs-options-list {
+  display: block;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.cs-container .cs-options .cs-options-list .cs-option {
+  color: #fff;
+  padding: 1rem;
+  cursor: pointer;
+}
+
+.cs-container .cs-options .cs-options-list .cs-option:hover,
+.cs-container .cs-options .cs-options-list .cs-option.active {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.cs-container .cs-options .cs-options-list .cs-option.selected {
+  background-color: rgba(255, 255, 255, 0.5);
+}
+
+.cs-container .cs-backdrop {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.cs-container.cs-disabled .cs-placeholder {
+  opacity: 0.5;
+}
+

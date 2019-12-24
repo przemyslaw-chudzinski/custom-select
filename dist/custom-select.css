@@ -1,1 +1,72 @@
-.cs-container{position:relative;width:100%;height:auto}.cs-container .cs-original-select-container{display:none}.cs-container .cs-placeholder{position:absolute;top:0;left:0;right:0;bottom:0;display:flex;align-items:center;padding:0 1rem;cursor:default}.cs-container .cs-options{position:absolute;width:100%;visibility:hidden;z-index:500}.cs-container .cs-options.active{visibility:visible}.cs-container .cs-backdrop{position:fixed;top:0;left:0;right:0;bottom:0;z-index:400;display:none}.cs-container .cs-backdrop.active{display:block}.cs-container.cs-disabled .cs-placeholder{cursor:not-allowed}.cs-container .cs-clear-all-btn{position:absolute;right:1rem;top:50%;-webkit-transform:translateY(-50%);transform:translateY(-50%);cursor:pointer;background-color:#eee;font-size:14px;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center}.cs-container .cs-clear-all-btn:hover{background-color:#ddd}
+.cs-container {
+  position: relative;
+  width: 100%;
+  height: auto;
+}
+
+.cs-container .cs-original-select-container {
+  display: none;
+}
+
+.cs-container .cs-placeholder {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: center;
+  padding: 0 1rem;
+  cursor: default;
+}
+
+.cs-container .cs-options {
+  position: absolute;
+  width: 100%;
+  visibility: hidden;
+  z-index: 500;
+}
+
+.cs-container .cs-options.active {
+  visibility: visible;
+}
+
+.cs-container .cs-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 400;
+  display: none;
+}
+
+.cs-container .cs-backdrop.active {
+  display: block;
+}
+
+.cs-container.cs-disabled .cs-placeholder {
+  cursor: not-allowed;
+}
+
+.cs-container .cs-clear-all-btn {
+  position: absolute;
+  right: 1rem;
+  top: 50%;
+  -webkit-transform: translateY(-50%);
+          transform: translateY(-50%);
+  cursor: pointer;
+  background-color: #eeeeee;
+  font-size: rem-calc(14px);
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.cs-container .cs-clear-all-btn:hover {
+  background-color: #ddd;
+}
+
