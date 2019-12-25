@@ -27,7 +27,7 @@
             height: 30vh;
             width: 100%;
             padding: 2rem;
-            background: aliceblue;
+            /*background: aliceblue;*/
             display: flex;
             align-items: center;
             justify-content: center;
@@ -68,8 +68,9 @@
 </head>
 <body>
 
-
 <div class="wrapper">
+
+    <h2>Disabled</h2>
 
     <select id="custom-select" class="foo" disabled>
 
@@ -86,14 +87,22 @@
 
     <h2>Usage when component is initialized with any value</h2>
 
-    <select id="custom-select-2" class="foo">
+    <form id="form-2">
+        <select id="custom-select-2" class="foo" name="myOption">
 
-        <option>-- Choose any element --</option>
-        <option value="1">This is option number one</option>
-        <option value="2">This is option number two</option>
-        <option value="3" selected>This is option number three</option>
+            <option>-- Choose any element --</option>
+            <option value="1">This is option number one</option>
+            <option value="2">This is option number two</option>
+            <option value="3" selected>This is option number three</option>
 
-    </select>
+        </select>
+
+        <br>
+        <br>
+
+        <button type="button" id="button-2">Show form values in console</button>
+
+    </form>
 
 </div>
 
@@ -141,7 +150,7 @@
 
         <select id="custom-select-5" class="foo" name="selected_value[]" multiple>
 
-<!--            <option>&#45;&#45; Choose any element &#45;&#45;</option>-->
+<!--            <option>-- Choose any element --</option>-->
             <option selected value="1" data-icon="menu" data-desc="This is a description of option number one">This is option number one</option>
             <option selected value="2" data-icon="menu" data-desc="This is a description of option number two">This is option number two</option>
             <option value="3" data-icon="menu" data-desc="This is a description of option number three">This is option number three</option>
@@ -158,7 +167,7 @@
 
     <h2>Tests about placeholder</h2>
 
-    <form method="post" action="http://localhost/cs-test/index.php">
+    <form>
 
         <div>
             <input type="text" name="some_value">
@@ -247,6 +256,22 @@
         }
 
     });
+
+    /* Tests for form-2 */
+    (function () {
+
+        const form = document.querySelector('#form-2');
+        const button = document.querySelector('#button-2');
+        const select = document.querySelector('#custom-select-2');
+
+        button.addEventListener('click', event => {
+
+            console.log(select.value);
+
+        });
+
+
+    })();
 
 </script>
 

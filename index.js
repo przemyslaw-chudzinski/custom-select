@@ -122,7 +122,8 @@ var _require = __webpack_require__(/*! ./dom-factories */ "./src/dom-factories.j
 
 var _require2 = __webpack_require__(/*! ./keyboard-support */ "./src/keyboard-support.js"),
     arrowDown = _require2.arrowDown,
-    arrowUp = _require2.arrowUp; // Private properties
+    arrowUp = _require2.arrowUp,
+    clearSelection = _require2.clearSelection; // Private properties
 
 
 var _config = new WeakMap();
@@ -204,12 +205,16 @@ function () {
 
 
       _config.get(this).closeOnBackdropClick && _csBackdrop.has(this) && _csBackdrop.get(this).addEventListener('click', this.close.bind(this)); // Clear selected options
+      // Assign events only when it has not disabled attribute
 
-      _config.get(this).showClearAllButton && _csClearAllBtn.has(this) && _csClearAllBtn.get(this).addEventListener('click', this.clear.bind(this));
-      _config.get(this).showClearAllButton && _csClearAllBtn.has(this) && _csClearAllBtn.get(this).addEventListener('keydown', function (_ref) {
-        var keyCode = _ref.keyCode;
-        return keyCode === keyCodes.ENTER && !_customSelectCopy.get(_this).disabled && _this.clear();
-      }); // Open on focus
+      if (_customSelectCopy.has(this) && !_customSelectCopy.get(this).hasAttribute('disabled')) {
+        _config.get(this).showClearAllButton && _csClearAllBtn.has(this) && _csClearAllBtn.get(this).addEventListener('click', this.clear.bind(this));
+        _config.get(this).showClearAllButton && _csClearAllBtn.has(this) && _csClearAllBtn.get(this).addEventListener('keydown', function (_ref) {
+          var keyCode = _ref.keyCode;
+          return keyCode === keyCodes.ENTER && !_customSelectCopy.get(_this).disabled && _this.clear();
+        });
+      } // Open on focus
+
 
       _csPlaceholderContainer.has(this) && _csPlaceholderContainer.get(this).addEventListener('focus', this.open.bind(this)); // Close on blur
 
@@ -220,6 +225,16 @@ function () {
       _csContainer.has(this) && _csContainer.get(this).addEventListener('keydown', function (_ref2) {
         var keyCode = _ref2.keyCode;
         return keyCode === keyCodes.ESCAPE && _this.close();
+      }); // Choose option when user ha pushed enter key
+
+      _csContainer.has(this) && _csContainer.get(this).addEventListener('keydown', function (_ref3) {
+        var keyCode = _ref3.keyCode;
+
+        // keyCode === keyCodes.ENTER && this.close()
+        if (keyCode === keyCodes.ENTER) {
+          // this[_updateOptions]();
+          _this.close();
+        }
       });
     } // Init single custom select
 
@@ -513,7 +528,9 @@ function () {
 
       _csOptionsContainer.get(this).classList.remove('active');
 
-      _csBackdrop.has(this) && _csBackdrop.get(this).classList.remove('active');
+      _csBackdrop.has(this) && _csBackdrop.get(this).classList.remove('active'); // Clear selection when the mask is closed
+
+      clearSelection(_csOptionsList.get(this).querySelectorAll('li.cs-option'));
 
       _customSelectCopy.get(this).dispatchEvent(event);
     }
@@ -565,6 +582,7 @@ function () {
         opt.selected = false;
         opt.removeAttribute('selected');
       });
+      clearSelection(_csOptionsList.get(this).querySelectorAll('li.cs-option'));
 
       this[_updatePlaceholder](_customSelectCopy.get(this).selectedOptions);
 
@@ -843,6 +861,19 @@ var hasSelections = function hasSelections(options) {
   return index !== null ? index : -1;
 };
 /**
+ * @desc It clears selected items
+ * @param options
+ * @return {void}
+ */
+
+
+var clearSelection = function clearSelection(options) {
+  if (!(options instanceof NodeList)) throw new Error('options must be an instance of NodeList class');
+  options && options.length && options.forEach(function (opt) {
+    return opt.classList.remove('selected');
+  });
+};
+/**
  * @desc Handle arrow down event
  * @return {null}
  * @param options
@@ -871,7 +902,8 @@ var arrowDown = function arrowDown(options) {
 var arrowUp = function arrowUp(options) {
   if (!(options instanceof NodeList)) throw new Error('options must be an instance of NodeList class');
   var currentSelectionIndex = hasSelections(options);
-  if (!options.length) return null; // Remove class from current select element
+  if (!options.length) return null;
+  if (currentSelectionIndex === -1) currentSelectionIndex = options.length; // Remove class from current select element
 
   var currentOption = options.item(currentSelectionIndex);
   currentOption && currentOption.classList.remove('selected');
@@ -884,7 +916,8 @@ var arrowUp = function arrowUp(options) {
 module.exports = {
   arrowDown: arrowDown,
   arrowUp: arrowUp,
-  hasSelections: hasSelections
+  hasSelections: hasSelections,
+  clearSelection: clearSelection
 };
 
 /***/ }),

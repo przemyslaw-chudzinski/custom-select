@@ -14,7 +14,8 @@ const {
 
 const {
     arrowDown,
-    arrowUp
+    arrowUp,
+    clearSelection
 } = require('./keyboard-support');
 
 // Private properties
@@ -74,8 +75,11 @@ class CustomSelect {
         _config.get(this).closeOnBackdropClick && _csBackdrop.has(this) && _csBackdrop.get(this).addEventListener('click', this.close.bind(this));
 
         // Clear selected options
-        _config.get(this).showClearAllButton && _csClearAllBtn.has(this) && _csClearAllBtn.get(this).addEventListener('click', this.clear.bind(this));
-        _config.get(this).showClearAllButton && _csClearAllBtn.has(this) && _csClearAllBtn.get(this).addEventListener('keydown', ({keyCode}) => keyCode === keyCodes.ENTER && !_customSelectCopy.get(this).disabled && this.clear());
+        // Assign events only when it has not disabled attribute
+        if (_customSelectCopy.has(this) && !_customSelectCopy.get(this).hasAttribute('disabled')) {
+            _config.get(this).showClearAllButton && _csClearAllBtn.has(this) && _csClearAllBtn.get(this).addEventListener('click', this.clear.bind(this));
+            _config.get(this).showClearAllButton && _csClearAllBtn.has(this) && _csClearAllBtn.get(this).addEventListener('keydown', ({keyCode}) => keyCode === keyCodes.ENTER && !_customSelectCopy.get(this).disabled && this.clear());
+        }
 
         // Open on focus
         _csPlaceholderContainer.has(this) && _csPlaceholderContainer.get(this).addEventListener('focus', this.open.bind(this));
@@ -87,6 +91,15 @@ class CustomSelect {
 
         // Close on escape
         _csContainer.has(this) && _csContainer.get(this).addEventListener('keydown', ({keyCode}) => keyCode === keyCodes.ESCAPE && this.close());
+
+        // Choose option when user ha pushed enter key
+        _csContainer.has(this) && _csContainer.get(this).addEventListener('keydown', ({keyCode}) => {
+            // keyCode === keyCodes.ENTER && this.close()
+            if (keyCode === keyCodes.ENTER) {
+                // this[_updateOptions]();
+                this.close();
+            }
+        });
 
     }
 
@@ -363,6 +376,8 @@ class CustomSelect {
         const event = new CustomEvent('cs:closed');
         _csOptionsContainer.get(this).classList.remove('active');
         _csBackdrop.has(this) && _csBackdrop.get(this).classList.remove('active');
+        // Clear selection when the mask is closed
+        clearSelection(_csOptionsList.get(this).querySelectorAll('li.cs-option'));
         _customSelectCopy.get(this).dispatchEvent(event);
     }
 
@@ -395,15 +410,17 @@ class CustomSelect {
      */
     clear() {
         const options = _customSelectCopy.get(this).options;
+
         options.length && [].forEach.call(options, opt => {
             opt.selected = false;
             opt.removeAttribute('selected');
         });
 
+        clearSelection(_csOptionsList.get(this).querySelectorAll('li.cs-option'));
+
         this[_updatePlaceholder](_customSelectCopy.get(this).selectedOptions);
         this[_updateOptions]();
     }
-
 
 }
 

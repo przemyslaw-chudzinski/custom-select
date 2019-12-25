@@ -16,6 +16,16 @@ const hasSelections = options => {
 };
 
 /**
+ * @desc It clears selected items
+ * @param options
+ * @return {void}
+ */
+const clearSelection = options => {
+    if (!(options instanceof NodeList)) throw new Error('options must be an instance of NodeList class');
+    options && options.length && options.forEach(opt => opt.classList.remove('selected'));
+};
+
+/**
  * @desc Handle arrow down event
  * @return {null}
  * @param options
@@ -51,6 +61,8 @@ const arrowUp = options => {
 
     if(!options.length) return null;
 
+    if (currentSelectionIndex === -1) currentSelectionIndex = options.length;
+
     // Remove class from current select element
     const currentOption = options.item(currentSelectionIndex);
     currentOption && currentOption.classList.remove('selected');
@@ -66,5 +78,6 @@ const arrowUp = options => {
 module.exports = {
     arrowDown,
     arrowUp,
-    hasSelections
+    hasSelections,
+    clearSelection
 };
